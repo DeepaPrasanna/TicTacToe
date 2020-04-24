@@ -22,13 +22,16 @@ startGame();
 restartButton.addEventListener('click', startGame);
 
 function startGame() {
-    circleTurn = false
 
+    circleTurn = false;
 
     cellElements.forEach(cell => {
+        //first remove all the added class and the event listeners if the game is restarted
         cell.classList.remove(X_CLASS)
         cell.classList.remove(CIRCLE_CLASS)
         cell.removeEventListener('click', handleClick)
+
+        //only for each click,"handleClick ()" is called
         cell.addEventListener('click', handleClick, { once: true })
     })
     setBoardHoverClass()
@@ -44,6 +47,7 @@ function handleClick(e) {
     const currentClass = circleTurn ? CIRCLE_CLASS : X_CLASS;
     //placing the mark
     placeMark(cell, currentClass)
+    //checking for winning status
     if (checkWin(currentClass)) {
         // console.log("winner")
         endGame(false)
@@ -59,6 +63,19 @@ function handleClick(e) {
 
     }
 
+
+}
+
+function placeMark(cell, currentClass) {
+    cell.classList.add(currentClass)
+}
+
+function checkWin(currentClass) {
+    return WINNING_COMBINATIONS.some(combination => {
+        return combination.every(index => {
+            return cellElements[index].classList.contains(currentClass)
+        })
+    })
 }
 
 function endGame(draw) {
@@ -77,9 +94,7 @@ function isDraw() {
     })
 }
 
-function placeMark(cell, currentClass) {
-    cell.classList.add(currentClass)
-}
+
 
 function swapTurns() {
     circleTurn = !circleTurn
@@ -96,10 +111,3 @@ function setBoardHoverClass() {
     }
 }
 
-function checkWin(currentClass) {
-    return WINNING_COMBINATIONS.some(combination => {
-        return combination.every(index => {
-            return cellElements[index].classList.contains(currentClass)
-        })
-    })
-}
